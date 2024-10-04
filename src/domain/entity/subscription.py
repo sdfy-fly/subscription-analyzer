@@ -13,14 +13,14 @@ class Subscription(BaseEntity):
     """Id подписки"""
     name: Name
     """Название подписки"""
-    category: Category | None
-    """Категория"""
     cost: Cost
     """Ежемесячная стоимость"""
     start_date: datetime
     """Дата начала подписки"""
     expired_date: datetime
     """Дата истечения подписки"""
+    category: Category | None = None
+    """Категория"""
     notification_on_expire: bool = False
     """Уведомлять о истечении подписки"""
     notification_on_budget_threshold: bool = False

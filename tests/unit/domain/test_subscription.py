@@ -20,21 +20,47 @@ def get_subscription(name: str = 'name', cost: float = 123):
     )
 
 
-@pytest.mark.parametrize('name', ['', ' '])
-def test_subscription__empty_name(name):
-    with pytest.raises(SubscriptionNameRequired) as e:
+@pytest.mark.parametrize(
+    'name, exception, message',
+    [
+        ('', SubscriptionNameRequired, 'Подписке необходимо задать название!'),
+        (' ', SubscriptionNameRequired, 'Подписке необходимо задать название!'),
+        ('x' * 256, SubscriptionNameTooLong, f'Слишком длинное название для подписки: {"x" * 256}'),
+    ],
+)
+def test_category__invalid_name(name, exception, message):
+    # act
+    with pytest.raises(exception) as e:
         get_subscription(name=name)
-        assert str(e) == 'Подписке необходимо задать название!'
+
+    # assert
+    assert str(e.value.message()) == message
 
 
-def test_subscription__name_too_long():
-    name = 'name' * 100
-    with pytest.raises(SubscriptionNameTooLong) as e:
-        get_subscription(name=name)
-        assert str(e) == f'Слишком длинное название для подписки: {name}'
+@pytest.mark.parametrize(
+    'cost, exception, message',
+    [
+        (0, SubscriptionCostMustBePositive, 'Цена подписки должна быть положительной!'),
+        (-123, SubscriptionCostMustBePositive, 'Цена подписки должна быть положительной!'),
+    ],
+)
+def test_subscription__invalid_price(cost, exception, message):
+    # act
+    with pytest.raises(exception) as e:
+        get_subscription(cost=cost)
+
+    # assert
+    assert str(e.value.message()) == message
 
 
-def test_subscription__non_positive_price():
-    with pytest.raises(SubscriptionCostMustBePositive) as e:
-        get_subscription(cost=0)
-        assert str(e) == 'Цена подписки должна быть положительной!'
+def test_subscription__ok():
+    # arrange
+    name = Name(value='some name')
+    cost = Cost(123)
+
+    # act
+    subscription = Subscription(name=name, cost=cost, start_date=get_utc_now(), expired_date=get_utc_now())
+
+    # assert
+    assert subscription.name.value == 'some name'
+    assert subscription.cost.value == 123

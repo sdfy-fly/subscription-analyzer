@@ -5,12 +5,12 @@ from src.domain.values.base import BaseValueObject
 
 
 @dataclass(frozen=True)
-class Name(BaseValueObject):
+class Name(BaseValueObject[str]):
     value: str
 
     def validate(self):
         if not self.value or not self.value.strip():
             raise CategoryNameRequired
 
-        if len(self.value) > 150:
+        if len(self.value) > 100:
             raise CategoryNameTooLong(self.value)

@@ -5,15 +5,33 @@ from src.domain.exceptions.category import CategoryNameRequired, CategoryNameToo
 from src.domain.values.category import Name
 
 
-@pytest.mark.parametrize('name', ['', ' '])
-def test_subscription__empty_name(name):
-    with pytest.raises(CategoryNameRequired) as e:
-        Category(name=Name(value=name))
-        assert str(e) == 'Категории необходимо задать название!'
+def get_category(name: str):
+    return Category(name=Name(name))
 
 
-def test_category__name_too_long():
-    name = 'name' * 100
-    with pytest.raises(CategoryNameTooLong) as e:
-        Category(name=Name(value=name))
-        assert str(e) == f'Слишком длинное название для категории: {name}'
+@pytest.mark.parametrize(
+    'name, exception, message',
+    [
+        ('', CategoryNameRequired, 'Категории необходимо задать название!'),
+        (' ', CategoryNameRequired, 'Категории необходимо задать название!'),
+        ('x' * 101, CategoryNameTooLong, f'Слишком длинное название для категории: {"x" * 101}'),
+    ],
+)
+def test_category__invalid_name(name, exception, message):
+    # act
+    with pytest.raises(exception) as e:
+        get_category(name=name)
+
+    # assert
+    assert str(e.value.message()) == message
+
+
+def test_category__ok():
+    # arrange
+    name = Name(value='some name')
+
+    # act
+    category = Category(name=name)
+
+    # assert
+    assert category.name.value == 'some name'
