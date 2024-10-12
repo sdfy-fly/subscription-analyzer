@@ -11,3 +11,5 @@ class Category(BaseEntity):
     """Id категории"""
     name: Name
     """Название категории"""
+    user_id: UUID
+    """Id пользователя"""

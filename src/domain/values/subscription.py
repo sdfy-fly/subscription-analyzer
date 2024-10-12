@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from src.domain.exceptions.subscription import (
+    SubscriptionBudgetMustBePositive,
     SubscriptionCostMustBePositive,
     SubscriptionNameRequired,
     SubscriptionNameTooLong,
@@ -27,3 +28,12 @@ class Cost(BaseValueObject[float]):
     def validate(self):
         if self.value <= 0:
             raise SubscriptionCostMustBePositive
+
+
+@dataclass(frozen=True)
+class Budget(BaseValueObject[float]):
+    value: float
+
+    def validate(self):
+        if self.value <= 0:
+            raise SubscriptionBudgetMustBePositive

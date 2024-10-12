@@ -21,3 +21,9 @@ class SubscriptionNameTooLong(ApplicationException):
 class SubscriptionCostMustBePositive(ApplicationException):
     def message(self):
         return 'Цена подписки должна быть положительной!'
+
+
+@dataclass(frozen=True)
+class SubscriptionBudgetMustBePositive(ApplicationException):
+    def message(self):
+        return 'Бюджет подписки должен быть положительным!'

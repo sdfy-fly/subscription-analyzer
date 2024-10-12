@@ -13,5 +13,5 @@ class User(BaseEntity):
     """Username"""
     password: Password
     """Пароль"""
-    email: Email | None
+    email: Email | None = None
     """Почта"""
