@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.container import get_container
 from src.core.settings import DataBaseSettings
 from src.infra.repositories.factories import BaseSessionFactory
+from src.services.mediator import Mediator
 from tests.functional.settings import test_settings
 
 
@@ -24,9 +25,14 @@ def event_loop():
     loop.close()
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def container():
     return get_container()
+
+
+@pytest.fixture(scope='session')
+def mediator(container) -> Mediator:
+    return container.resolve(Mediator)
 
 
 @pytest.fixture(scope='session', autouse=True)

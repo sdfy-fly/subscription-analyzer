@@ -10,6 +10,11 @@ from src.infra.repositories.postgres.category import PostgresCategoryRepository
 from src.infra.repositories.postgres.factories import PostgresSessionFactory
 from src.infra.repositories.postgres.subscription import PostgresSubscriptionRepository
 from src.infra.repositories.postgres.user import PostgresUserRepository
+from src.infra.repositories.uow import UnitOfWork
+from src.infra.security.base import BasePasswordHasher
+from src.infra.security.password import PasswordHasher
+from src.services.commands.user.register_command import RegisterCommand, RegisterCommandHandler
+from src.services.mediator import Mediator
 
 
 @lru_cache(1)
@@ -20,12 +25,30 @@ def get_container() -> punq.Container:
 def _init_container() -> punq.Container:
     container = punq.Container()
 
-    # Session Factory
+    # Security
+    container.register(BasePasswordHasher, PasswordHasher)
+
+    # Factories
     container.register(BaseSessionFactory, PostgresSessionFactory, scope=punq.Scope.singleton)
 
     # Repository
     container.register(BaseUserRepository, PostgresUserRepository)
     container.register(BaseCategoryRepository, PostgresCategoryRepository)
     container.register(BaseSubscriptionRepository, PostgresSubscriptionRepository)
+
+    # Command Handlers
+    container.register(RegisterCommandHandler)
+
+    # Mediator
+    def init_mediator():
+        mediator = Mediator()
+        mediator.register_command(command=RegisterCommand, handler=container.resolve(RegisterCommandHandler))
+
+        return mediator
+
+    container.register(Mediator, factory=init_mediator)
+
+    # UnitOfWork
+    container.register(UnitOfWork, container=container)
 
     return container
