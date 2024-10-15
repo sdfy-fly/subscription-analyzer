@@ -1,8 +1,10 @@
+import binascii
+
 import pytest
 
 from src.domain.entity.user import User
 from src.domain.repositories.user import BaseUserRepository
-from src.domain.values.user import Email, Password, Username
+from src.domain.values.user import Email, HashedPassword, Username
 
 
 @pytest.fixture(name='user_repo')
@@ -13,7 +15,11 @@ async def get_repo(container, pg_session):
 
 async def test_user__create(user_repo, pg_session, pg):
     # arrange
-    user = User(username=Username('test user123'), password=Password('Password!123'), email=Email('test123@gmail.com'))
+    user = User(
+        username=Username('test user123'),
+        password=HashedPassword(b'Password!123'),
+        email=Email('test123@gmail.com'),
+    )
 
     # act
     await user_repo.create(user)
@@ -26,7 +32,7 @@ async def test_user__create(user_repo, pg_session, pg):
 
     assert user_from_db['id'] == user.id
     assert user_from_db['username'] == user.username.value
-    assert user_from_db['password'] == user.password.value
+    assert binascii.unhexlify(user_from_db['password'][2:]) == user.password.value
     assert user_from_db['email'] == user.email.value
     assert user_from_db['created_at'] == user.created_at
     assert user_from_db['updated_at'] == user.updated_at
@@ -41,14 +47,10 @@ async def test_user__create(user_repo, pg_session, pg):
 )
 async def test_user__is_username_exists(user_repo, pg_session, pg, new_username, existing_username, expected_result):
     # arrange
-    user = User(
-        username=Username(existing_username),
-        password=Password('Password!123'),
-    )
+    user = User(username=Username(existing_username), password=HashedPassword(b'Password!123'))
 
     # act
     await user_repo.create(user)
-    await pg_session.commit()
     result = await user_repo.is_username_exists(new_username)
 
     # assert
@@ -64,11 +66,10 @@ async def test_user__is_username_exists(user_repo, pg_session, pg, new_username,
 )
 async def test_user__is_email_exists(user_repo, pg_session, pg, new_email, existing_email, expected_result):
     # arrange
-    user = User(username=Username('username1'), password=Password('Password!123'), email=Email(existing_email))
+    user = User(username=Username('username1'), password=HashedPassword(b'Password!123'), email=Email(existing_email))
 
     # act
     await user_repo.create(user)
-    await pg_session.commit()
     result = await user_repo.is_email_exists(new_email)
 
     # assert

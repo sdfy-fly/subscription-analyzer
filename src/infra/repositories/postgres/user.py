@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -13,9 +14,7 @@ from src.infra.repositories.postgres.models import UserModel
 class PostgresUserRepository(BaseUserRepository):
     session: AsyncSession
 
-    # TODO: в команде проверить ошибки индекса уникальности
-    # TODO: хешировать пароль
-    async def create(self, user: User) -> User:
+    async def create(self, user: User) -> UUID:
         email = user.email.value if user.email else None
         query = (
             insert(UserModel)
@@ -27,11 +26,11 @@ class PostgresUserRepository(BaseUserRepository):
                 created_at=user.created_at,
                 updated_at=user.updated_at,
             )
-            .returning(UserModel)
+            .returning(UserModel.id)
         )
 
-        user = await self.session.scalars(query)
-        return UserModel.to_entity(user.one_or_none())
+        user_id = await self.session.scalar(query)
+        return user_id
 
     async def is_username_exists(self, username: str) -> bool:
         query = select(UserModel.id).filter_by(username=username)

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from uuid import UUID
 
 from src.domain.entity.user import User
 
@@ -13,6 +14,6 @@ class BaseUserRepository(ABC):
     async def is_email_exists(self, email: str) -> bool: ...
 
     @abstractmethod
-    async def create(self, user: User) -> User: ...
+    async def create(self, user: User) -> UUID: ...
 
     # TODO: добавить auth

@@ -3,13 +3,13 @@ from dataclasses import dataclass
 from src.domain.exceptions.base import ApplicationException
 
 
-@dataclass(frozen=True)
+@dataclass
 class CategoryNameRequired(ApplicationException):
     def message(self):
         return 'Категории необходимо задать название!'
 
 
-@dataclass(frozen=True)
+@dataclass
 class CategoryNameTooLong(ApplicationException):
     name: str
 
