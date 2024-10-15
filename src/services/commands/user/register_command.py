@@ -3,7 +3,6 @@ from uuid import UUID
 
 from src.domain.entity.user import User
 from src.domain.values.user import Email, HashedPassword, Password, Username
-from src.infra.repositories.factories import BaseSessionFactory
 from src.infra.repositories.uow import UnitOfWork
 from src.infra.security.base import BasePasswordHasher
 from src.services.commands.base import BaseCommand, BaseCommandHandler
@@ -18,9 +17,8 @@ class RegisterCommand(BaseCommand):
 
 
 @dataclass
-class RegisterCommandHandler(BaseCommandHandler):
+class RegisterCommandHandler(BaseCommandHandler[UUID]):
     uow: UnitOfWork
-    session: BaseSessionFactory
     hasher: BasePasswordHasher
 
     async def handle(self, command: RegisterCommand) -> UUID:

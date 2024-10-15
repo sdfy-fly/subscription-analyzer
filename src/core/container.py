@@ -13,6 +13,8 @@ from src.infra.repositories.postgres.user import PostgresUserRepository
 from src.infra.repositories.uow import UnitOfWork
 from src.infra.security.base import BasePasswordHasher
 from src.infra.security.password import PasswordHasher
+from src.services.commands.category.create_category_command import CreateCategoryCommand, CreateCategoryCommandHandler
+from src.services.commands.category.update_category_command import UpdateCategoryCommand, UpdateCategoryCommandHandler
 from src.services.commands.user.register_command import RegisterCommand, RegisterCommandHandler
 from src.services.mediator import Mediator
 
@@ -38,11 +40,19 @@ def _init_container() -> punq.Container:
 
     # Command Handlers
     container.register(RegisterCommandHandler)
+    container.register(CreateCategoryCommandHandler)
+    container.register(UpdateCategoryCommandHandler)
 
     # Mediator
     def init_mediator():
         mediator = Mediator()
         mediator.register_command(command=RegisterCommand, handler=container.resolve(RegisterCommandHandler))
+        mediator.register_command(
+            command=CreateCategoryCommand, handler=container.resolve(CreateCategoryCommandHandler)
+        )
+        mediator.register_command(
+            command=UpdateCategoryCommand, handler=container.resolve(UpdateCategoryCommandHandler)
+        )
 
         return mediator
 

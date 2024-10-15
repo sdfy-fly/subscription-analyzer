@@ -57,7 +57,6 @@ class PostgresSubscriptionRepository(BaseSubscriptionRepository):
                 created_at=subscription.created_at,
                 updated_at=subscription.updated_at,
             )
-            .on_conflict_do_nothing()
             .returning(SubscriptionModel)
         )
 

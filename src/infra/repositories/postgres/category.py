@@ -14,7 +14,6 @@ from src.infra.repositories.postgres.models import CategoryModel
 class PostgresCategoryRepository(BaseCategoryRepository):
     session: AsyncSession
 
-    # TODO: в команде проверить ошибку на индекс уникальности
     async def create(self, category: Category) -> Category:
         query = (
             insert(CategoryModel)
@@ -25,7 +24,6 @@ class PostgresCategoryRepository(BaseCategoryRepository):
                 created_at=category.created_at,
                 updated_at=category.updated_at,
             )
-            .on_conflict_do_nothing()
             .returning(CategoryModel)
         )
 
@@ -33,8 +31,9 @@ class PostgresCategoryRepository(BaseCategoryRepository):
         return CategoryModel.to_entity(category.one_or_none())
 
     async def is_category_exists(self, category: Category) -> bool:
-        query = select(CategoryModel).where(
+        query = select(CategoryModel.id).where(
             and_(
+                CategoryModel.id != category.id,
                 CategoryModel.user_id == category.user_id,
                 CategoryModel.name == category.name.value,
             )
@@ -44,19 +43,12 @@ class PostgresCategoryRepository(BaseCategoryRepository):
 
     async def get_user_categories(self, user_id: UUID) -> list[Category]:
         categories = await self.session.scalars(select(CategoryModel).filter_by(user_id=user_id))
-
         return [CategoryModel.to_entity(category) for category in categories.all()]
 
     async def get_by_id(self, category_id: UUID) -> Category | None:
-        category = await self.session.scalars(select(CategoryModel).filter_by(id=category_id))
+        category = await self.session.scalar(select(CategoryModel).filter_by(id=category_id))
+        return CategoryModel.to_entity(category) if category else None
 
-        if not (category := category.one_or_none()):
-            return None
-
-        return CategoryModel.to_entity(category)
-
-    # TODO: проверить что я изменяю свою категорию а не чью то еще
-    # TODO: отловить ошибку уникальности индекса уникальности (если изменить название на уже существующее)
     async def update(self, category: Category) -> Category:
         query = (
             update(CategoryModel).values(name=category.name.value).filter_by(id=category.id).returning(CategoryModel)
