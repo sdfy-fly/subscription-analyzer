@@ -15,3 +15,6 @@ class BaseUserRepository(ABC):
 
     @abstractmethod
     async def create(self, user: User) -> UUID: ...
+
+    @abstractmethod
+    async def get_user_by_id(self, user_id: UUID) -> User | None: ...

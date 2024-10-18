@@ -15,6 +15,7 @@ class UserModel(UUIDMixin, CreatedUpdatedMixin, Base):
 
     def to_entity(self) -> User:
         return User(
+            id=self.id,
             username=Username(self.username),
             password=HashedPassword(self.password),
             email=Email(str(self.email)) if self.email else None,

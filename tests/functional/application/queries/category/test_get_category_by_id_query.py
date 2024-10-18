@@ -34,6 +34,7 @@ async def test_get_category_by_id_query__category_does_not_exists(mediator):
     with pytest.raises(CategoryNotFound) as e:
         await mediator.handle_query(query)
 
+    # assert
     assert e.value.message == f'Категория с id="{category_id}" не найдена!'
 
 
@@ -50,4 +51,5 @@ async def test_get_category_by_id_query__stranger_category(mediator, insert_user
     with pytest.raises(ForbiddenActionException) as e:
         await mediator.handle_query(query)
 
+    # assert
     assert e.value.message == 'Доступ запрещен: невозможно получить чужую категорию'

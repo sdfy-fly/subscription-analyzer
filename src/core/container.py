@@ -25,6 +25,7 @@ from src.application.queries.category.get_user_categories_query import (
     GetUserCategoriesQuery,
     GetUserCategoriesQueryHandler,
 )
+from src.application.queries.user.get_user_by_id_query import GetUserByIdQuery, GetUserByIdQueryHandler
 from src.domain.repositories.category import BaseCategoryRepository
 from src.domain.repositories.subscription import BaseSubscriptionRepository
 from src.domain.repositories.user import BaseUserRepository
@@ -67,6 +68,7 @@ def _init_container() -> punq.Container:
     # Query Handlers
     container.register(GetCategoryByIdQueryHandler)
     container.register(GetUserCategoriesQueryHandler)
+    container.register(GetUserByIdQueryHandler)
 
     # Mediator
     def init_mediator():
@@ -94,6 +96,8 @@ def _init_container() -> punq.Container:
         # category
         mediator.register_query(query=GetCategoryByIdQuery, handler=container.resolve(GetCategoryByIdQueryHandler))
         mediator.register_query(query=GetUserCategoriesQuery, handler=container.resolve(GetUserCategoriesQueryHandler))
+        # user
+        mediator.register_query(query=GetUserByIdQuery, handler=container.resolve(GetUserByIdQueryHandler))
 
         return mediator
 

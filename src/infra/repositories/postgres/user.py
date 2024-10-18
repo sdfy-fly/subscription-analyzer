@@ -14,6 +14,13 @@ from src.infra.repositories.postgres.models import UserModel
 class PostgresUserRepository(BaseUserRepository):
     session: AsyncSession
 
+    async def get_user_by_id(self, user_id: UUID) -> User | None:
+        query = select(UserModel).filter_by(id=user_id)
+        if not (user := await self.session.scalar(query)):
+            return None
+
+        return UserModel.to_entity(user)
+
     async def create(self, user: User) -> UUID:
         email = user.email.value if user.email else None
         query = (
