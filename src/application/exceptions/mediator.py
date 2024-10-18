@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from src.services.commands.base import BaseCommand
-from src.services.exceptions.base import ServiceException
+from src.application.commands.base import BaseCommand
+from src.application.exceptions.base import ApplicationException
 
 
 @dataclass
-class CommandHandlerNotFound(ServiceException):
+class CommandHandlerNotFound(ApplicationException):
     command: type[BaseCommand]
 
     @property

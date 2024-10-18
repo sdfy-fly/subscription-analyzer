@@ -4,9 +4,9 @@ import pytest
 
 from src.domain.entity.category import Category
 from src.domain.values.category import Name
-from src.services.commands.category.update_category_command import UpdateCategoryCommand
-from src.services.exceptions.category import CategoryAlreadyExists
-from src.services.exceptions.common import ForbiddenActionException
+from src.application.commands.category.update_category_command import UpdateCategoryCommand
+from src.application.exceptions.category import CategoryAlreadyExists, CategoryNotFound
+from src.application.exceptions.common import ForbiddenActionException
 
 
 async def test_update_category_command__ok(mediator, insert_user, insert_category):
@@ -76,4 +76,13 @@ async def test_update_category__already_exists(mediator, insert_user, insert_cat
 
     # act
     with pytest.raises(CategoryAlreadyExists):
+        await mediator.handle_command(command)
+
+
+async def test_update_category__not_found(mediator):
+    # arrange
+    command = UpdateCategoryCommand(category_id=uuid4(), name='category 1', user_id=uuid4())
+
+    # act
+    with pytest.raises(CategoryNotFound):
         await mediator.handle_command(command)

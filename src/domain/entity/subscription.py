@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 from src.domain.entity.base import BaseEntity
 from src.domain.entity.category import Category
+from src.domain.exceptions.subscription import SubscriptionInvalidDate
 from src.domain.values.subscription import Budget, Cost, Name
 
 
@@ -29,3 +30,7 @@ class Subscription(BaseEntity):
     """Уведомлять о истечении подписки"""
     notification_on_budget_threshold: bool = False
     """Уведомлять о превышении бюджета"""
+
+    def __post_init__(self):
+        if self.start_date > self.expired_date:
+            raise SubscriptionInvalidDate

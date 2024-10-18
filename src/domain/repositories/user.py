@@ -15,5 +15,3 @@ class BaseUserRepository(ABC):
 
     @abstractmethod
     async def create(self, user: User) -> UUID: ...
-
-    # TODO: добавить auth

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from src.services.exceptions.base import ServiceException
+from src.application.exceptions.base import ApplicationException
 
 
 @dataclass
-class ForbiddenActionException(ServiceException):
+class ForbiddenActionException(ApplicationException):
     detail: str
 
     @property

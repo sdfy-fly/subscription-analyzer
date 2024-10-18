@@ -3,8 +3,8 @@ import binascii
 import pytest
 
 from src.infra.security.base import BasePasswordHasher
-from src.services.commands.user.register_command import RegisterCommand
-from src.services.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
+from src.application.commands.user.register_command import RegisterCommand
+from src.application.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
 
 
 async def test_register_command__ok(mediator, container, pg):

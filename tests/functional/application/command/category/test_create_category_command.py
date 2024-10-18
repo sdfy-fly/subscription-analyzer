@@ -3,8 +3,8 @@ from uuid import uuid4
 import pytest
 
 from src.domain.entity.category import Category
-from src.services.commands.category.create_category_command import CreateCategoryCommand
-from src.services.exceptions.category import CategoryAlreadyExists
+from src.application.commands.category.create_category_command import CreateCategoryCommand
+from src.application.exceptions.category import CategoryAlreadyExists
 
 
 async def test_create_category_command__ok(mediator, insert_user):

@@ -31,8 +31,15 @@ class PostgresSubscriptionRepository(BaseSubscriptionRepository):
         return SubscriptionModel.to_entity(subscription)
 
     async def is_subscription_exists(self, subscription: Subscription) -> bool:
-        query = select(SubscriptionModel).where(
-            and_(SubscriptionModel.name == subscription.name.value, SubscriptionModel.user_id == subscription.user_id)
+        query = (
+            select(SubscriptionModel)
+            .where(
+                and_(
+                    SubscriptionModel.id != subscription.id,
+                    SubscriptionModel.name == subscription.name.value,
+                    SubscriptionModel.user_id == subscription.user_id
+                )
+            )
         )
 
         result = await self.session.scalar(query)

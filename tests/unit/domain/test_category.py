@@ -25,7 +25,7 @@ def test_category__invalid_name(name, exception, message):
         get_category(name=name)
 
     # assert
-    assert str(e.value.message()) == message
+    assert str(e.value.message) == message
 
 
 def test_category__ok():

@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
@@ -7,6 +8,7 @@ from src.domain.entity.subscription import Subscription
 from src.domain.exceptions.subscription import (
     SubscriptionBudgetMustBePositive,
     SubscriptionCostMustBePositive,
+    SubscriptionInvalidDate,
     SubscriptionNameRequired,
     SubscriptionNameTooLong,
 )
@@ -15,14 +17,23 @@ from src.domain.values.category import Name as CategoryName
 from src.domain.values.subscription import Budget, Cost, Name
 
 
-def get_subscription(name: str = 'name', cost: float = 123, budget: float = 123):
+def get_subscription(
+    name: str = 'name',
+    cost: float = 123,
+    budget: float = 123,
+    start_date: datetime | None = None,
+    expired_date: datetime | None = None,
+):
+    start_date = start_date if start_date else get_utc_now()
+    expired_date = expired_date if expired_date else get_utc_now()
+
     return Subscription(
         name=Name(value=name),
         category=None,
         cost=Cost(value=cost),
         budget=Budget(value=budget),
-        start_date=get_utc_now(),
-        expired_date=get_utc_now(),
+        start_date=start_date,
+        expired_date=expired_date,
         user_id=uuid4(),
     )
 
@@ -41,39 +52,58 @@ def test_category__invalid_name(name, exception, message):
         get_subscription(name=name)
 
     # assert
-    assert str(e.value.message()) == message
+    assert str(e.value.message) == message
 
 
 @pytest.mark.parametrize(
-    'cost, exception, message',
+    'cost, message',
     [
-        (0, SubscriptionCostMustBePositive, 'Цена подписки должна быть положительной!'),
-        (-123, SubscriptionCostMustBePositive, 'Цена подписки должна быть положительной!'),
+        (0, 'Цена подписки должна быть положительной!'),
+        (-123, 'Цена подписки должна быть положительной!'),
     ],
 )
-def test_subscription__invalid_cost(cost, exception, message):
+def test_subscription__invalid_cost(cost, message):
     # act
-    with pytest.raises(exception) as e:
+    with pytest.raises(SubscriptionCostMustBePositive) as e:
         get_subscription(cost=cost)
 
     # assert
-    assert str(e.value.message()) == message
+    assert str(e.value.message) == message
 
 
 @pytest.mark.parametrize(
-    'budget, exception, message',
+    'budget, message',
     [
-        (0, SubscriptionBudgetMustBePositive, 'Бюджет подписки должен быть положительным!'),
-        (-123, SubscriptionBudgetMustBePositive, 'Бюджет подписки должен быть положительным!'),
+        (0, 'Бюджет подписки должен быть положительным!'),
+        (-123, 'Бюджет подписки должен быть положительным!'),
     ],
 )
-def test_subscription__invalid_budget(budget, exception, message):
+def test_subscription__invalid_budget(budget, message):
     # act
-    with pytest.raises(exception) as e:
+    with pytest.raises(SubscriptionBudgetMustBePositive) as e:
         get_subscription(budget=budget)
 
     # assert
-    assert str(e.value.message()) == message
+    assert str(e.value.message) == message
+
+
+@pytest.mark.parametrize(
+    'start_date, expired_date, message',
+    [
+        (
+            datetime(day=1, month=1, year=2020, tzinfo=UTC),
+            datetime(day=1, month=1, year=2010, tzinfo=UTC),
+            'Дата начала подписки не может быть позже даты истечения',
+        ),
+    ],
+)
+def test_subscription__invalid_date(start_date, expired_date, message):
+    # act
+    with pytest.raises(SubscriptionInvalidDate) as e:
+        get_subscription(start_date=start_date, expired_date=expired_date)
+
+    # assert
+    assert str(e.value.message) == message
 
 
 def test_subscription__ok():

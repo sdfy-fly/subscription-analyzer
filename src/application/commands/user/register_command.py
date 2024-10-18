@@ -5,8 +5,8 @@ from src.domain.entity.user import User
 from src.domain.values.user import Email, HashedPassword, Password, Username
 from src.infra.repositories.uow import UnitOfWork
 from src.infra.security.base import BasePasswordHasher
-from src.services.commands.base import BaseCommand, BaseCommandHandler
-from src.services.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
+from src.application.commands.base import BaseCommand, BaseCommandHandler
+from src.application.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
 
 
 @dataclass(frozen=True)
@@ -39,5 +39,4 @@ class RegisterCommandHandler(BaseCommandHandler[UUID]):
             user.password = HashedPassword(hashed_password)
             user_id = await self.uow.user_repo.create(user)
 
-        # TODO: выдать jwt токен
         return user_id

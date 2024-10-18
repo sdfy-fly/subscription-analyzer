@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ApplicationException(Exception):
+class DomainException(Exception):
     @property
     def message(self):
-        return 'Ошибка приложения'
+        return 'Доменная ошибка'

@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 
-from src.services.exceptions.base import ServiceException
+from src.application.exceptions.base import ApplicationException
 
 
 @dataclass
-class UsernameAlreadyExists(ServiceException):
+class UsernameAlreadyExists(ApplicationException):
     @property
     def message(self):
         return 'Username уже занят!'
 
 
 @dataclass
-class EmailAlreadyExists(ServiceException):
+class EmailAlreadyExists(ApplicationException):
     @property
     def message(self):
         return 'Почта уже занята!'

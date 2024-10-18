@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.container import get_container
 from src.core.settings import DataBaseSettings
 from src.infra.repositories.factories import BaseSessionFactory
-from src.services.mediator import Mediator
+from src.application.mediator import Mediator
 from tests.functional.settings import test_settings
 
 

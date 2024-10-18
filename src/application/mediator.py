@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
-from src.services.commands.base import CR, BaseCommand, BaseCommandHandler
-from src.services.exceptions.mediator import CommandHandlerNotFound
+from src.application.commands.base import CR, BaseCommand, BaseCommandHandler
+from src.application.exceptions.mediator import CommandHandlerNotFound
 
 
 @dataclass

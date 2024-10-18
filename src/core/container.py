@@ -2,6 +2,8 @@ from functools import lru_cache
 
 import punq
 
+from src.application.commands.subscription.update_subscription_command import UpdateSubscriptionCommandHandler, \
+    UpdateSubscriptionCommand
 from src.domain.repositories.category import BaseCategoryRepository
 from src.domain.repositories.subscription import BaseSubscriptionRepository
 from src.domain.repositories.user import BaseUserRepository
@@ -13,10 +15,14 @@ from src.infra.repositories.postgres.user import PostgresUserRepository
 from src.infra.repositories.uow import UnitOfWork
 from src.infra.security.base import BasePasswordHasher
 from src.infra.security.password import PasswordHasher
-from src.services.commands.category.create_category_command import CreateCategoryCommand, CreateCategoryCommandHandler
-from src.services.commands.category.update_category_command import UpdateCategoryCommand, UpdateCategoryCommandHandler
-from src.services.commands.user.register_command import RegisterCommand, RegisterCommandHandler
-from src.services.mediator import Mediator
+from src.application.commands.category.create_category_command import CreateCategoryCommand, CreateCategoryCommandHandler
+from src.application.commands.category.update_category_command import UpdateCategoryCommand, UpdateCategoryCommandHandler
+from src.application.commands.subscription.create_subscription_command import (
+    CreateSubscriptionCommand,
+    CreateSubscriptionCommandHandler,
+)
+from src.application.commands.user.register_command import RegisterCommand, RegisterCommandHandler
+from src.application.mediator import Mediator
 
 
 @lru_cache(1)
@@ -42,16 +48,30 @@ def _init_container() -> punq.Container:
     container.register(RegisterCommandHandler)
     container.register(CreateCategoryCommandHandler)
     container.register(UpdateCategoryCommandHandler)
+    container.register(CreateSubscriptionCommandHandler)
+    container.register(UpdateSubscriptionCommandHandler)
 
     # Mediator
     def init_mediator():
         mediator = Mediator()
+
+        # user
         mediator.register_command(command=RegisterCommand, handler=container.resolve(RegisterCommandHandler))
+
+        # category
         mediator.register_command(
             command=CreateCategoryCommand, handler=container.resolve(CreateCategoryCommandHandler)
         )
         mediator.register_command(
             command=UpdateCategoryCommand, handler=container.resolve(UpdateCategoryCommandHandler)
+        )
+
+        # subscription
+        mediator.register_command(
+            command=CreateSubscriptionCommand, handler=container.resolve(CreateSubscriptionCommandHandler)
+        )
+        mediator.register_command(
+            command=UpdateSubscriptionCommand, handler=container.resolve(UpdateSubscriptionCommandHandler)
         )
 
         return mediator

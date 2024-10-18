@@ -1,0 +1,17 @@
+[run]
+source = src
+concurrency = thread
+omit =
+    */migrations/*
+    */tests/*
+    */src/core/*
+
+[report]
+fail_under = 80
+show_missing = True
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+
+[html]
+directory = coverage_html_report
