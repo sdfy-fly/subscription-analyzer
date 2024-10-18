@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from src.application.commands.base import BaseCommand, BaseCommandHandler
+from src.application.exceptions.category import CategoryAlreadyExists
 from src.domain.entity.category import Category
 from src.domain.values.category import Name
 from src.infra.repositories.uow import UnitOfWork
-from src.application.commands.base import BaseCommand, BaseCommandHandler
-from src.application.exceptions.category import CategoryAlreadyExists
 
 
 @dataclass(frozen=True)

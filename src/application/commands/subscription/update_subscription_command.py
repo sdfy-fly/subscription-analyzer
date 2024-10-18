@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
+from src.application.commands.base import BaseCommand, BaseCommandHandler
 from src.application.exceptions.category import CategoryNotFound
 from src.application.exceptions.subscription import SubscriptionAlreadyExists
 from src.domain.entity.category import Category
 from src.domain.entity.subscription import Subscription
-from src.application.commands.base import BaseCommand, BaseCommandHandler
-from src.domain.values.subscription import Name, Cost, Budget
+from src.domain.values.subscription import Budget, Cost, Name
 from src.infra.repositories.uow import UnitOfWork
 
 
@@ -30,7 +30,6 @@ class UpdateSubscriptionCommandHandler(BaseCommandHandler[Subscription]):
     uow: UnitOfWork
 
     async def handle(self, command: UpdateSubscriptionCommand) -> Subscription:
-
         async with self.uow:
             category = await self._get_category_if_exists(command.category_id)
             subscription = Subscription(

@@ -2,11 +2,11 @@ from uuid import uuid4
 
 import pytest
 
-from src.domain.entity.category import Category
-from src.domain.values.category import Name
 from src.application.commands.category.update_category_command import UpdateCategoryCommand
 from src.application.exceptions.category import CategoryAlreadyExists, CategoryNotFound
 from src.application.exceptions.common import ForbiddenActionException
+from src.domain.entity.category import Category
+from src.domain.values.category import Name
 
 
 async def test_update_category_command__ok(mediator, insert_user, insert_category):

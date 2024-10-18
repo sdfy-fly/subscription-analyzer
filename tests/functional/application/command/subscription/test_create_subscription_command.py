@@ -2,13 +2,13 @@ from uuid import uuid4
 
 import pytest
 
+from src.application.commands.subscription.create_subscription_command import CreateSubscriptionCommand
+from src.application.exceptions.category import CategoryNotFound
+from src.application.exceptions.subscription import SubscriptionAlreadyExists
 from src.domain.entity.category import Category
 from src.domain.entity.subscription import Subscription
 from src.domain.helpers import get_utc_now
 from src.domain.values.category import Name
-from src.application.commands.subscription.create_subscription_command import CreateSubscriptionCommand
-from src.application.exceptions.category import CategoryNotFound
-from src.application.exceptions.subscription import SubscriptionAlreadyExists
 
 
 async def test_create_subscription_command__ok(mediator, insert_user, insert_category):

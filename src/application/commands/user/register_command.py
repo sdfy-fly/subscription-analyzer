@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from src.application.commands.base import BaseCommand, BaseCommandHandler
+from src.application.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
 from src.domain.entity.user import User
 from src.domain.values.user import Email, HashedPassword, Password, Username
 from src.infra.repositories.uow import UnitOfWork
 from src.infra.security.base import BasePasswordHasher
-from src.application.commands.base import BaseCommand, BaseCommandHandler
-from src.application.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
 
 
 @dataclass(frozen=True)

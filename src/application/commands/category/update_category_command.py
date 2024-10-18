@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.domain.entity.category import Category
-from src.domain.values.category import Name
-from src.infra.repositories.uow import UnitOfWork
 from src.application.commands.base import BaseCommand, BaseCommandHandler
 from src.application.exceptions.category import CategoryAlreadyExists, CategoryNotFound
 from src.application.exceptions.common import ForbiddenActionException
+from src.domain.entity.category import Category
+from src.domain.values.category import Name
+from src.infra.repositories.uow import UnitOfWork
 
 
 @dataclass(frozen=True)

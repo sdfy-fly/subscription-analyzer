@@ -42,11 +42,13 @@ class PostgresCategoryRepository(BaseCategoryRepository):
         return result is not None
 
     async def get_user_categories(self, user_id: UUID) -> list[Category]:
-        categories = await self.session.scalars(select(CategoryModel).filter_by(user_id=user_id))
+        query = select(CategoryModel).filter_by(user_id=user_id)
+        categories = await self.session.scalars(query)
         return [CategoryModel.to_entity(category) for category in categories.all()]
 
     async def get_by_id(self, category_id: UUID) -> Category | None:
-        category = await self.session.scalar(select(CategoryModel).filter_by(id=category_id))
+        query = select(CategoryModel).filter_by(id=category_id)
+        category = await self.session.scalar(query)
         return CategoryModel.to_entity(category) if category else None
 
     async def update(self, category: Category) -> Category:

@@ -27,7 +27,7 @@ async def test_update_subscription_command__ok(mediator, insert_user, insert_cat
         notification_on_expire=True,
         notification_on_budget_threshold=False,
         user_id=user_id,
-        category_id=category_id
+        category_id=category_id,
     )
 
     # act
@@ -43,7 +43,9 @@ async def test_update_subscription_command__ok(mediator, insert_user, insert_cat
     assert subscription.category.id == category_id
 
 
-async def test_update_subscription_command__remove_category(mediator, insert_user, insert_category, insert_subscription):
+async def test_update_subscription_command__remove_category(
+    mediator, insert_user, insert_category, insert_subscription
+):
     # arrange
     user_id = uuid4()
     category_id = uuid4()
@@ -61,7 +63,7 @@ async def test_update_subscription_command__remove_category(mediator, insert_use
         notification_on_expire=True,
         notification_on_budget_threshold=False,
         user_id=user_id,
-        category_id=None
+        category_id=None,
     )
 
     # act
@@ -75,7 +77,9 @@ async def test_update_subscription_command__remove_category(mediator, insert_use
     assert subscription.category is None
 
 
-async def test_update_subscription_command__category_does_not_exists(mediator, insert_user, insert_category, insert_subscription):
+async def test_update_subscription_command__category_does_not_exists(
+    mediator, insert_user, insert_category, insert_subscription
+):
     # arrange
     user_id = uuid4()
     category_id = uuid4()
@@ -92,7 +96,7 @@ async def test_update_subscription_command__category_does_not_exists(mediator, i
         notification_on_expire=True,
         notification_on_budget_threshold=False,
         user_id=user_id,
-        category_id=category_id
+        category_id=category_id,
     )
 
     # act
@@ -100,7 +104,9 @@ async def test_update_subscription_command__category_does_not_exists(mediator, i
         await mediator.handle_command(command)
 
 
-async def test_update_subscription_command__subscription_already_exists(mediator, insert_user, insert_category, insert_subscription):
+async def test_update_subscription_command__subscription_already_exists(
+    mediator, insert_user, insert_category, insert_subscription
+):
     # arrange
     user_id = uuid4()
     subscription_id_1 = uuid4()
@@ -118,7 +124,7 @@ async def test_update_subscription_command__subscription_already_exists(mediator
         notification_on_expire=True,
         notification_on_budget_threshold=False,
         user_id=user_id,
-        category_id=None
+        category_id=None,
     )
 
     # act
