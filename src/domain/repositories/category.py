@@ -21,3 +21,6 @@ class BaseCategoryRepository(ABC):
 
     @abstractmethod
     async def update(self, category: Category) -> Category: ...
+
+    @abstractmethod
+    async def remove(self, category_id: UUID) -> None: ...

@@ -194,3 +194,42 @@ async def test_subscription__update(insert_user, insert_category, subscription_r
     assert subscription_in_db['category_id'] is None
     assert subscription_in_db['created_at'] == subscription.created_at
     assert subscription_in_db['updated_at'] > subscription.updated_at
+
+
+async def test_subscription__remove(subscription_repo, insert_subscription, insert_user, pg, pg_session):
+    # arrange
+    subscription_id = uuid4()
+    user_id = uuid4()
+    await insert_user(user_id=user_id)
+    await insert_subscription(subscription_id=subscription_id, user_id=user_id)
+
+    # act
+    subscription_before = await pg.fetch('SELECT * FROM subscriptions')
+    await subscription_repo.remove(subscription_id)
+    await pg_session.commit()
+    subscription_after = await pg.fetch('SELECT * FROM subscriptions')
+
+    # assert
+    assert len(subscription_before) == 1
+    assert len(subscription_after) == 0
+
+
+async def test_subscription__remove__subscription_does_not_exists(
+    subscription_repo, insert_subscription, insert_user, pg, pg_session
+):
+    # arrange
+    subscription_id = uuid4()
+    random_id = uuid4()
+    user_id = uuid4()
+    await insert_user(user_id=user_id)
+    await insert_subscription(subscription_id=subscription_id, user_id=user_id)
+
+    # act
+    subscription_before = await pg.fetch('SELECT * FROM subscriptions')
+    await subscription_repo.remove(random_id)
+    await pg_session.commit()
+    subscription_after = await pg.fetch('SELECT * FROM subscriptions')
+
+    # assert
+    assert len(subscription_before) == 1
+    assert len(subscription_after) == 1

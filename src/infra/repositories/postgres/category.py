@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from sqlalchemy import and_, select, update
+from sqlalchemy import and_, delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,3 +58,7 @@ class PostgresCategoryRepository(BaseCategoryRepository):
         updated_category = await self.session.scalars(query)
 
         return CategoryModel.to_entity(updated_category.first())
+
+    async def remove(self, category_id: UUID) -> None:
+        query = delete(CategoryModel).filter_by(id=category_id)
+        await self.session.execute(query)

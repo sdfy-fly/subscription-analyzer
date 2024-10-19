@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from sqlalchemy import and_, select, update
+from sqlalchemy import and_, delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -89,3 +89,7 @@ class PostgresSubscriptionRepository(BaseSubscriptionRepository):
 
         subscription = await self.session.scalars(query)
         return SubscriptionModel.to_entity(subscription.first())
+
+    async def remove(self, subscription_id: UUID) -> None:
+        query = delete(SubscriptionModel).filter_by(id=subscription_id)
+        await self.session.execute(query)

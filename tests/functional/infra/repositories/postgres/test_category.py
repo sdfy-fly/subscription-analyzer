@@ -144,3 +144,40 @@ async def test_category__update(category_repo, pg_session, pg, insert_user):
     assert category_in_db['user_id'] == category.user_id
     assert category_in_db['created_at'] == category.created_at
     assert category_in_db['updated_at'] == updated_category.updated_at
+
+
+async def test_category__remove(category_repo, insert_category, insert_user, pg, pg_session):
+    # arrange
+    category_id = uuid4()
+    user_id = uuid4()
+    await insert_user(user_id=user_id)
+    await insert_category(category_id=category_id, user_id=user_id)
+
+    # act
+    category_before = await pg.fetch('SELECT * FROM categories')
+    await category_repo.remove(category_id)
+    await pg_session.commit()
+    category_after = await pg.fetch('SELECT * FROM categories')
+
+    # assert
+    assert len(category_before) == 1
+    assert len(category_after) == 0
+
+
+async def test_category__remove__category_does_not_exists(category_repo, insert_category, insert_user, pg, pg_session):
+    # arrange
+    category_id = uuid4()
+    user_id = uuid4()
+    random_id = uuid4()
+    await insert_user(user_id=user_id)
+    await insert_category(category_id=category_id, user_id=user_id)
+
+    # act
+    category_before = await pg.fetch('SELECT * FROM categories')
+    await category_repo.remove(random_id)
+    await pg_session.commit()
+    category_after = await pg.fetch('SELECT * FROM categories')
+
+    # assert
+    assert len(category_before) == 1
+    assert len(category_after) == 1

@@ -32,5 +32,3 @@ async def test_get_user_by_id__not_found(mediator):
 
     # assert
     assert e.value.message == f'Пользователя с id="{user_id}" не найден!'
-
-

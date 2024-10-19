@@ -6,6 +6,10 @@ from src.application.commands.category.create_category_command import (
     CreateCategoryCommand,
     CreateCategoryCommandHandler,
 )
+from src.application.commands.category.delete_category_command import (
+    DeleteCategoryCommand,
+    DeleteCategoryCommandHandler,
+)
 from src.application.commands.category.update_category_command import (
     UpdateCategoryCommand,
     UpdateCategoryCommandHandler,
@@ -13,6 +17,10 @@ from src.application.commands.category.update_category_command import (
 from src.application.commands.subscription.create_subscription_command import (
     CreateSubscriptionCommand,
     CreateSubscriptionCommandHandler,
+)
+from src.application.commands.subscription.delete_subscription_command import (
+    DeleteSubscriptionCommand,
+    DeleteSubscriptionCommandHandler,
 )
 from src.application.commands.subscription.update_subscription_command import (
     UpdateSubscriptionCommand,
@@ -25,10 +33,14 @@ from src.application.queries.category.get_user_categories_query import (
     GetUserCategoriesQuery,
     GetUserCategoriesQueryHandler,
 )
-from src.application.queries.subscription.get_subscription_by_id_query import GetSubscriptionByIdQuery, \
-    GetSubscriptionByIdQueryHandler
-from src.application.queries.subscription.get_user_subscription_query import GetUserSubscriptionsQuery, \
-    GetUserSubscriptionsQueryHandler
+from src.application.queries.subscription.get_subscription_by_id_query import (
+    GetSubscriptionByIdQuery,
+    GetSubscriptionByIdQueryHandler,
+)
+from src.application.queries.subscription.get_user_subscription_query import (
+    GetUserSubscriptionsQuery,
+    GetUserSubscriptionsQueryHandler,
+)
 from src.application.queries.user.get_user_by_id_query import GetUserByIdQuery, GetUserByIdQueryHandler
 from src.domain.repositories.category import BaseCategoryRepository
 from src.domain.repositories.subscription import BaseSubscriptionRepository
@@ -39,8 +51,9 @@ from src.infra.repositories.postgres.factories import PostgresSessionFactory
 from src.infra.repositories.postgres.subscription import PostgresSubscriptionRepository
 from src.infra.repositories.postgres.user import PostgresUserRepository
 from src.infra.repositories.uow import UnitOfWork
-from src.infra.security.base import BasePasswordHasher
+from src.infra.security.base import BasePasswordHasher, BaseTokenManager
 from src.infra.security.password import PasswordHasher
+from src.infra.security.token import JwtTokenManager
 
 
 @lru_cache(1)
@@ -53,6 +66,7 @@ def _init_container() -> punq.Container:
 
     # Security
     container.register(BasePasswordHasher, PasswordHasher)
+    container.register(BaseTokenManager, JwtTokenManager)
 
     # Factories
     container.register(BaseSessionFactory, PostgresSessionFactory, scope=punq.Scope.singleton)
@@ -66,8 +80,10 @@ def _init_container() -> punq.Container:
     container.register(RegisterCommandHandler)
     container.register(CreateCategoryCommandHandler)
     container.register(UpdateCategoryCommandHandler)
+    container.register(DeleteCategoryCommandHandler)
     container.register(CreateSubscriptionCommandHandler)
     container.register(UpdateSubscriptionCommandHandler)
+    container.register(DeleteSubscriptionCommandHandler)
 
     # Query Handlers
     container.register(GetCategoryByIdQueryHandler)
@@ -90,12 +106,18 @@ def _init_container() -> punq.Container:
         mediator.register_command(
             command=UpdateCategoryCommand, handler=container.resolve(UpdateCategoryCommandHandler)
         )
+        mediator.register_command(
+            command=DeleteCategoryCommand, handler=container.resolve(DeleteCategoryCommandHandler)
+        )
         # subscription
         mediator.register_command(
             command=CreateSubscriptionCommand, handler=container.resolve(CreateSubscriptionCommandHandler)
         )
         mediator.register_command(
             command=UpdateSubscriptionCommand, handler=container.resolve(UpdateSubscriptionCommandHandler)
+        )
+        mediator.register_command(
+            command=DeleteSubscriptionCommand, handler=container.resolve(DeleteSubscriptionCommandHandler)
         )
 
         # Queries

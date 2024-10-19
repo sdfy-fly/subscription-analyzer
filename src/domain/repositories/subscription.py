@@ -21,3 +21,6 @@ class BaseSubscriptionRepository(ABC):
 
     @abstractmethod
     async def update(self, subscription: Subscription) -> Subscription: ...
+
+    @abstractmethod
+    async def remove(self, subscription_id: UUID) -> None: ...

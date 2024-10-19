@@ -48,6 +48,4 @@ async def test_get_subscription_by_id_query__access_denied(mediator, insert_user
         await mediator.handle_query(query)
 
     # assert
-    assert e.value.message == f'Доступ запрещен: невозможно получить чужую подписку'
-
-
+    assert e.value.message == 'Доступ запрещен: невозможно получить чужую подписку'
