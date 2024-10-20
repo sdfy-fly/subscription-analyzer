@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -23,8 +25,15 @@ class DataBaseSettings(BaseSettings):
         return f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
 
 
+class JwtSettings(BaseSettings):
+    key: str = Field(alias='JWT_KEY')
+    algorithm: str = Field(alias='JWT_ALGORITHM')
+    ttl: timedelta = timedelta(days=7)
+
+
 class Settings(BaseSettings):
     db: DataBaseSettings = DataBaseSettings()
+    jwt: JwtSettings = JwtSettings()
 
 
 settings = Settings()

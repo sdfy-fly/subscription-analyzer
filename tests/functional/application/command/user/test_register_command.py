@@ -4,7 +4,7 @@ import pytest
 
 from src.application.commands.user.register_command import RegisterCommand
 from src.application.exceptions.user import EmailAlreadyExists, UsernameAlreadyExists
-from src.infra.security.base import BasePasswordHasher
+from src.infra.security.base import BasePasswordHasher, BaseTokenManager
 
 
 async def test_register_command__ok(mediator, container, pg):
@@ -12,15 +12,17 @@ async def test_register_command__ok(mediator, container, pg):
     user_password = 'Password123!'
     command = RegisterCommand(username='username1', password=user_password, email=None)
     hasher: BasePasswordHasher = container.resolve(BasePasswordHasher)
+    token_manager: BaseTokenManager = container.resolve(BaseTokenManager)
 
     # act
-    user_id = await mediator.handle_command(command)
+    token = await mediator.handle_command(command)
 
     # assert
     user_in_db = await pg.fetch('SELECT * FROM users')
     assert len(user_in_db) == 1
     user_in_db = user_in_db[0]
 
+    user_id = token_manager.verify_token(token)
     assert user_in_db['id'] == user_id
     db_password_bytes = binascii.unhexlify(user_in_db['password'][2:])
     assert hasher.verify_password(user_password, db_password_bytes)
