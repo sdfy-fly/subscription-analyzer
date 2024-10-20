@@ -6,21 +6,22 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from asyncpg import Connection
+from fastapi import FastAPI
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.testclient import TestClient
 
 from src.application.mediator import Mediator
 from src.core.container import get_container
 from src.core.settings import DataBaseSettings
 from src.infra.repositories.factories import BaseSessionFactory
+from src.presentation.main import create_fastapi_app
 from tests.functional.settings import test_settings
 
 
 @pytest.fixture(scope='session', autouse=True)
 def event_loop():
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
+    loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
 
@@ -65,3 +66,15 @@ async def apply_migrations():
 
     command.downgrade(alembic_config, 'base')
     command.upgrade(alembic_config, 'head')
+
+
+@pytest.fixture(scope='session')
+def app() -> FastAPI:
+    application = create_fastapi_app()
+    return application
+
+
+@pytest.fixture()
+async def test_client(app: FastAPI) -> AsyncClient:
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac

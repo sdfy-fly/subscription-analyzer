@@ -39,7 +39,7 @@ def test_user__invalid_username(username, exception, message):
         get_user(username=username)
 
     # assert
-    assert str(e.value.message()) == message
+    assert e.value.message == message
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ def test_user__invalid_password(password, exception, message):
         get_user(password=password)
 
     # act
-    assert str(e.value.message()) == message
+    assert e.value.message == message
 
 
 @pytest.mark.parametrize(
@@ -82,7 +82,7 @@ def test_user__invalid_email(email, exception, message):
         get_user(email=email)
 
     # assert
-    assert str(e.value.message()) == message
+    assert e.value.message == message
 
 
 def test_user__ok():

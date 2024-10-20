@@ -52,7 +52,7 @@ def test_category__invalid_name(name, exception, message):
         get_subscription(name=name)
 
     # assert
-    assert str(e.value.message) == message
+    assert e.value.message == message
 
 
 @pytest.mark.parametrize(
@@ -68,7 +68,7 @@ def test_subscription__invalid_cost(cost, message):
         get_subscription(cost=cost)
 
     # assert
-    assert str(e.value.message) == message
+    assert e.value.message == message
 
 
 @pytest.mark.parametrize(
@@ -84,7 +84,7 @@ def test_subscription__invalid_budget(budget, message):
         get_subscription(budget=budget)
 
     # assert
-    assert str(e.value.message) == message
+    assert e.value.message == message
 
 
 @pytest.mark.parametrize(
@@ -103,7 +103,7 @@ def test_subscription__invalid_date(start_date, expired_date, message):
         get_subscription(start_date=start_date, expired_date=expired_date)
 
     # assert
-    assert str(e.value.message) == message
+    assert e.value.message == message
 
 
 def test_subscription__ok():
