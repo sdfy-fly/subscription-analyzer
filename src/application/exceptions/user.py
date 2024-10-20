@@ -25,3 +25,12 @@ class UserNotFound(ApplicationException):
     @property
     def message(self):
         return f'Пользователя с id="{self.user_id}" не найден!'
+
+
+@dataclass
+class AuthException(ApplicationException):
+    text: str
+
+    @property
+    def message(self):
+        return self.text

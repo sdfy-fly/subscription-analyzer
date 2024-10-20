@@ -9,7 +9,6 @@ from asyncpg import Connection
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.testclient import TestClient
 
 from src.application.mediator import Mediator
 from src.core.container import get_container
@@ -76,5 +75,5 @@ def app() -> FastAPI:
 
 @pytest.fixture()
 async def test_client(app: FastAPI) -> AsyncClient:
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(app=app, base_url='http://test') as ac:
         yield ac

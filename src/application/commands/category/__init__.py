@@ -1,3 +1,3 @@
 from .create_category_command import CreateCategoryCommand
-from .update_category_command import UpdateCategoryCommand
 from .delete_category_command import DeleteCategoryCommand
+from .update_category_command import UpdateCategoryCommand

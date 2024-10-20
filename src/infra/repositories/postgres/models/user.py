@@ -10,7 +10,7 @@ class UserModel(UUIDMixin, CreatedUpdatedMixin, Base):
     __tablename__ = 'users'
 
     username: Mapped[str] = mapped_column(unique=True, index=True)
-    password: Mapped[bytes]
+    password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=True)
 
     def to_entity(self) -> User:

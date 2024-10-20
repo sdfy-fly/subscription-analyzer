@@ -48,3 +48,8 @@ class PostgresUserRepository(BaseUserRepository):
         query = select(UserModel.id).filter_by(email=email)
         result = await self.session.scalar(query)
         return result is not None
+
+    async def get_user_by_username(self, username: str) -> User | None:
+        query = select(UserModel).filter_by(username=username)
+        result = await self.session.scalar(query)
+        return UserModel.to_entity(result) if result else None

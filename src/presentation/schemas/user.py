@@ -4,17 +4,26 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class CreateUserRequestSchema(BaseModel):
+class CreateUserRequest(BaseModel):
     username: str
     password: str
     email: str | None
 
 
-class CreateUserResponseSchema(BaseModel):
+class CreateUserResponse(BaseModel):
     token: str
 
 
-class GetUserResponseSchema(BaseModel):
+class AuthUserRequest(BaseModel):
+    username: str
+    password: str
+
+
+class AuthUserResponse(BaseModel):
+    token: str
+
+
+class GetUserResponse(BaseModel):
     id: UUID
     username: str
     created_at: datetime

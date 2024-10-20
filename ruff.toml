@@ -36,6 +36,7 @@ select = [
 ignore = [
     "UP040", # non-pep695-type-alias
     "B005", # strip-with-multi-characters
+    "B904", # raise-without-from-inside-except
     "B905", # zip-without-explicit-strict
     "N818", # error-suffix-on-exception-name
     "ISC001", # single-line-implicit-string-concatenation

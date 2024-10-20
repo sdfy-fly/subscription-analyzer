@@ -57,8 +57,8 @@ class Password(BaseValueObject[str]):
 
 
 @dataclass(frozen=True)
-class HashedPassword(Password, BaseValueObject[bytes]):
-    value: bytes
+class HashedPassword(Password, BaseValueObject[str]):
+    value: str
 
     def validate(self): ...
 

@@ -1,4 +1,4 @@
-import binascii
+from uuid import uuid4
 
 import pytest
 
@@ -17,7 +17,7 @@ async def test_user__create(user_repo, pg_session, pg):
     # arrange
     user = User(
         username=Username('test user123'),
-        password=HashedPassword(b'Password!123'),
+        password=HashedPassword('password1'),
         email=Email('test123@gmail.com'),
     )
 
@@ -32,7 +32,7 @@ async def test_user__create(user_repo, pg_session, pg):
 
     assert user_from_db['id'] == user.id
     assert user_from_db['username'] == user.username.value
-    assert binascii.unhexlify(user_from_db['password'][2:]) == user.password.value
+    assert user_from_db['password'] == user.password.value
     assert user_from_db['email'] == user.email.value
     assert user_from_db['created_at'] == user.created_at
     assert user_from_db['updated_at'] == user.updated_at
@@ -47,7 +47,7 @@ async def test_user__create(user_repo, pg_session, pg):
 )
 async def test_user__is_username_exists(user_repo, pg_session, pg, new_username, existing_username, expected_result):
     # arrange
-    user = User(username=Username(existing_username), password=HashedPassword(b'Password!123'))
+    user = User(username=Username(existing_username), password=HashedPassword('password1'))
 
     # act
     await user_repo.create(user)
@@ -66,7 +66,7 @@ async def test_user__is_username_exists(user_repo, pg_session, pg, new_username,
 )
 async def test_user__is_email_exists(user_repo, pg_session, pg, new_email, existing_email, expected_result):
     # arrange
-    user = User(username=Username('username1'), password=HashedPassword(b'Password!123'), email=Email(existing_email))
+    user = User(username=Username('username1'), password=HashedPassword('password1'), email=Email(existing_email))
 
     # act
     await user_repo.create(user)
@@ -74,3 +74,24 @@ async def test_user__is_email_exists(user_repo, pg_session, pg, new_email, exist
 
     # assert
     assert result is expected_result
+
+
+async def test_user__get_user_by_username__ok(user_repo, insert_user):
+    # arrange
+    user_id = uuid4()
+    await insert_user(username='username 123', user_id=user_id)
+
+    # act
+    user = await user_repo.get_user_by_username('username 123')
+
+    # assert
+    assert user.id == user_id
+    assert user.username.value == 'username 123'
+
+
+async def test_user__get_user_by_username__does_not_exists(user_repo):
+    # act
+    user = await user_repo.get_user_by_username('username 123')
+
+    # assert
+    assert user is None

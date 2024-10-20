@@ -26,6 +26,7 @@ from src.application.commands.subscription.update_subscription_command import (
     UpdateSubscriptionCommand,
     UpdateSubscriptionCommandHandler,
 )
+from src.application.commands.user.auth_user_command import AuthUserCommand, AuthUserCommandHandler
 from src.application.commands.user.register_command import RegisterCommand, RegisterCommandHandler
 from src.application.mediator import Mediator
 from src.application.queries.category.get_category_by_id_query import GetCategoryByIdQuery, GetCategoryByIdQueryHandler
@@ -78,6 +79,7 @@ def _init_container() -> punq.Container:
 
     # Command Handlers
     container.register(RegisterCommandHandler)
+    container.register(AuthUserCommandHandler)
     container.register(CreateCategoryCommandHandler)
     container.register(UpdateCategoryCommandHandler)
     container.register(DeleteCategoryCommandHandler)
@@ -99,6 +101,7 @@ def _init_container() -> punq.Container:
         # Commands
         # user
         mediator.register_command(command=RegisterCommand, handler=container.resolve(RegisterCommandHandler))
+        mediator.register_command(command=AuthUserCommand, handler=container.resolve(AuthUserCommandHandler))
         # category
         mediator.register_command(
             command=CreateCategoryCommand, handler=container.resolve(CreateCategoryCommandHandler)

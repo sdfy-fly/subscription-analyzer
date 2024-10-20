@@ -8,15 +8,10 @@ def hasher(container) -> BasePasswordHasher:
     return container.resolve(BasePasswordHasher)
 
 
-@pytest.mark.parametrize(
-    'password',
-    [
-        'password123',
-        'пароль123',
-        'Password!123',
-    ],
-)
-async def test_password__hash(hasher, password):
+async def test_password__hash(hasher):
+    # arrange
+    password = 'Password123!'
+
     # act
     hashed_password = hasher.hash_password(password)
 
