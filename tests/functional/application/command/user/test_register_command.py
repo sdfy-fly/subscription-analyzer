@@ -1,4 +1,3 @@
-
 import pytest
 
 from src.application.commands.user.register_command import RegisterCommand

@@ -33,10 +33,15 @@ def insert_user(pg):
 
 @pytest.fixture
 def insert_category(pg):
-    async def wrapper(user_id: UUID, category_id: UUID | None = None, name: str | None = None):
+    async def wrapper(
+        user_id: UUID,
+        category_id: UUID | None = None,
+        name: str | None = None,
+        created_updated_ts: datetime | None = None,
+    ):
         category_id = category_id if category_id else uuid4()
         name = name if name else faker_.name()
-        created_updated_ts = get_utc_now()
+        created_updated_ts = created_updated_ts if created_updated_ts else get_utc_now()
         await pg.copy_records_to_table(
             table_name=CategoryModel.__tablename__,
             columns=['id', 'name', 'user_id', 'created_at', 'updated_at'],
